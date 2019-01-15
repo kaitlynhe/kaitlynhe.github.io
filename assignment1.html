@@ -1,25 +1,62 @@
-<!DOCTYPE html> 
-<html> 
-    <head> 
-        <meta charset="utf-8"> 
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-        <title>Example Student's HCDE 439 Physical Computing Page!</title> 
+        <title>Assignment 1: Blink!</title>
 
         <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
 
-    </head> 
-    <body> 
+    </head>
+    <body>
 
         <div class="header">
-            <h1>Example Student's Assignment 1!</h1>
+            <h1>Assignment 1: Blink!</h1>
             <p>
-            <img src="red-panda.jpg" width=400></a>
-            </p>
-            <p>
-            Here is all the documentation for assignment 1!
+            Here is all the documentation for Assignment 1!
+            <h3>The Schematic</h3>
+            <img src= "schematic.JPG" alt= "Picture of the schematic I drew" width=400></a>
+            <h3>The Circuit</h3>
+            <img src= "circuit.JPG" alt= "Picture of the Circuit I created" width=400></a>
+            <h3>The Code</h3>
+            <pre>
+
+              // the setup function runs once when you press reset or power the board
+              int pin12 = 12;
+              int pin11 = 11;
+              int pin10 = 10;
+
+              void setup() {
+                // initialize digital pin LED_BUILTIN as an output.
+                pinMode(pin12, OUTPUT);
+                pinMode(pin11, OUTPUT);
+                pinMode(pin10, OUTPUT);
+              }
+
+              // the loop function runs over and over again forever
+              void loop() {
+                digitalWrite(pin12, HIGH);   // turn the LED on (HIGH is the voltage level)
+                delay(500);                       // wait for half of a second
+                digitalWrite(pin12, LOW);    // turn the LED off by making the voltage LOW
+                delay(500);                       // wait for half of a second
+
+                digitalWrite(pin11, LOW);   // turn the LED off (LOW is the voltage level)
+                delay(500);                       // wait for half of a second
+                digitalWrite(pin11, HIGH);    // turn the LED onn by making the voltage HIGH
+                delay(500);                       //wait for half of a second
+
+                digitalWrite(pin10, LOW);   // turn the LED off (LOW is the voltage level)
+                delay(500);                       // wait for half of a second
+                digitalWrite(pin10, HIGH);    // turn the LED on by making the voltage HIGH
+                delay(500);                       // wait for half of a second
+              }
+            </pre>
+
+            <h3>The Operation of the Circuit</h3>
+            <img src="demo.gif" alt="Gif. of the working Circuit blinking half a second with three LEDs alternating" width=400 height=auto></a>
             </p>
         </div>
-        
+
     </body>
 </html>
