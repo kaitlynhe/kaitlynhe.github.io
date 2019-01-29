@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html> //assignment 3
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Kaitlyn He's HCDE 439 Physical Computing Page!</title>
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head>
+    <body>
+
+      <div class="header">
+          <h1>Assignment 3: Input! Output!</h1>
+          <p>
+          Here is all the documentation for Assignment 3!
+          <h3>The Schematic</h3>
+          <img src= "ass3-schematic.jpg" alt= "Picture of the schematic I drew" width=400></a>
+          This drawing is the schematic of a potentiometer and two LED lights.
+          Resisters are picked from assignment 1 and suggested in class, and with calculation shown in the picture.
+
+          <h3>The Circuit</h3>
+          <img src= "ass3-circuit.JPG" alt= "Picture of the Circuit I created" width=400></a>
+          This is the final set up for the circuit looping from pin9, pin10, 5V to GND.
+
+          <h3>The Code</h3>
+          <pre>
+            //This is a code that allows one Potentiometer controls two LED lights bright or dim at the same time.
+
+            //these constans won't change. They are names of the input and output pins.
+            const int analogInPin = A0;   //analog input pin that the potentiometer is attached to
+            const int analogOutPin1 = 9;  //analog output pin that the yellow LED light is attached to
+            const int analogOutPin2 = 8;  //analog output pin that the white LED light is attached to
+
+
+            int sensorValue = 0;    //value read from the pot
+            int outputValue = 0;    //value output to the PWM
+
+
+            void setup() {
+              // initialize serial communications at 9600 bps:
+              Serial.begin(9600);
+
+            }
+
+
+            void loop() {
+              // read the analog in values
+              sensorValue = analogRead(analogInPin);
+              //map it to the range of the analog out put
+              outputValue = map(sensorValue, 0, 800, 0, 255);
+              //change the analog out value for the yellow and white LED lights
+              analogWrite(analogOutPin1, outputValue);
+              analogWrite(analogOutPin2, outputValue);
+
+              //print out the result to the Serial Monitor
+              Serial.print("sensor = ");
+              Serial.print(sensorValue);
+              Serial.print("\t output = ");
+              Serial.println(outputValue);
+
+              //wait 50 ms before the next loop begins so that the result is more obvious
+              delay(50);
+
+
+            }
+          </pre>
+
+          <h3>The Operation of the Circuit</h3>
+          Below is a short demo of the circuit in operation.
+          <img src="demo3.gif" alt="Gif. of the working Circuit lights up slowly in red and alternating from green to blue" width=400 height=auto></a>
+          </p>
+
+    </body>
+</html>
