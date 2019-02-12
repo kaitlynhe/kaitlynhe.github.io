@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html> //assignment 3
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Kaitlyn He's HCDE 439 Physical Computing Page!</title>
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head>
+    <body>
+
+      <div class="header">
+          <h1>Assignment 4: Voltage & Transistor</h1>
+          <p>
+          Here is all the documentation for Assignment 4!
+          <h3>The Schematic</h3>
+          <img src= "ass4-schematic.jpg" alt= "Picture of the schematic I drew" width=400></a>
+          This drawing is the schematic of a motor and a Transistor.
+          I also plan to ask the TA about this schematic as well for correctness and further understanding.
+
+          <h3>The Circuit</h3>
+          <img src= "ass4-circuit.JPG" alt= "Picture of the Circuit I created" width=400></a>
+          This is the final set up for the circuit looping from pin9, 5V to GND and an extra battery...
+          without the working outlet due to missing parts connecting the battery to the breadboard.
+
+          <h3>The Code</h3>
+          <pre>
+            /*
+            This assignment had to be modified due to the snow weather condition and me forgetting a few
+            things back in Seattle.
+            It is meant to be connected to the battery and the power source to turn on the motor, but it
+            was not completed due to missing voltage measurement and connector to the battry
+            */
+            const int motorPin = 9; //this is the pin that connects to the motor
+
+            void setup() {
+              pinMode(motorPin, OUTPUT); //initialize the motor as the output
+            }
+
+            void loop() {
+              digitalWrite(motorPin, HIGH); //sets the motor running in the beginning
+              delay(50);  //pause for 50ms
+              digitalWrite(motorPin, LOW);  //then stop running the motor
+            }
+          </pre>
+
+          <h3>The Operation of the Circuit</h3>
+          Below is a short demo of the circuit in operation.
+          Will be uploaded shortly after I have access to power source.
+          <img src="demo4.gif" alt="Gif. of the working Circuit lights up slowly in red and alternating from green to blue" width=400 height=auto></a>
+          </p>
+
+    </body>
+</html>
