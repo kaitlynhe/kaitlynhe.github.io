@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Final Project</title>
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head>
+    <body>
+
+        <div class="header">
+            <h1>Final Project</h1>
+            <p>
+            I am not sure what my project would look like yet..
+            but I would want something that can detect the soil temperture for my succenlents, so that I know when to put them inside or be worried that they might have a chance to get frozen or too hot
+
+
+    </body>
+</html>
