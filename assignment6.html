@@ -24,90 +24,119 @@
 
           <h3>The Code Js</h3>
           <pre>
-var serial; // variable to hold an instance of the serialport library
-var portName = '/dev/cu.usbmodem14201' //rename to the name of your port
-var datain; //some data coming in over serial!
-var xPos = 0;
+            var serial; // variable to hold an instance of the serialport library
+            var portName = '/dev/cu.usbmodem14201' //rename to the name of your port
+            var datain; //some data coming in over serial!
+            var xPos = 0;
 
 
-function setup() {
-  serial = new p5.SerialPort();       // make a new instance of the serialport library
-  serial.on('list', printList);       // set a callback function for the serialport list event
-  serial.on('connected', serverConnected); // callback for connecting to the server
-  serial.on('open', portOpen);        // callback for the port opening
-  serial.on('data', serialEvent);     // callback for when new data arrives
-  serial.on('error', serialError);    // callback for errors
-  serial.on('close', portClose);      // callback for the port closing
+            function setup() {
+              serial = new p5.SerialPort();       // make a new instance of the serialport library
+              serial.on('list', printList);       // set a callback function for the serialport list event
+              serial.on('connected', serverConnected); // callback for connecting to the server
+              serial.on('open', portOpen);        // callback for the port opening
+              serial.on('data', serialEvent);     // callback for when new data arrives
+              serial.on('error', serialError);    // callback for errors
+              serial.on('close', portClose);      // callback for the port closing
 
-  serial.list();                      // list the serial ports
-  serial.open(portName);              // open a serial port
-  createCanvas(1200, 800);
-  background(0x08, 0x16, 0x40);
-}
+              serial.list();                      // list the serial ports
+              serial.open(portName);              // open a serial port
+              createCanvas(1200, 800);
+              background(0x08, 0x16, 0x40);
+            }
 
-// get the list of ports:
-function printList(portList) {
- // portList is an array of serial port names
- for (var i = 0; i < portList.length; i++) {
- // Display the list the console:
-   print(i + " " + portList[i]);
- }
-}
+            // get the list of ports:
+            function printList(portList) {
+             // portList is an array of serial port names
+             for (var i = 0; i < portList.length; i++) {
+             // Display the list the console:
+               print(i + " " + portList[i]);
+             }
+            }
 
-function serverConnected() {
-  print('connected to server.');
-}
+            function serverConnected() {
+              print('connected to server.');
+            }
 
-function portOpen() {
-  print('the serial port opened.')
-}
+            function portOpen() {
+              print('the serial port opened.')
+            }
 
-function serialError(err) {
-  print('Something went wrong with the serial port. ' + err);
-}
+            function serialError(err) {
+              print('Something went wrong with the serial port. ' + err);
+            }
 
-function portClose() {
-  print('The serial port closed.');
-}
+            function portClose() {
+              print('The serial port closed.');
+            }
 
-function serialEvent() {
-  if (serial.available()) {
-  	datain = Number(serial.readLine());
-    console.log(datain);
-  }
-}
+            function serialEvent() {
+              if (serial.available()) {
+                datain = Number(serial.readLine());
+                console.log(datain);
+              }
+            }
 
-//interactive function with the button input
-function draw() {
-  graphData(datain);
-}
+            function graphData(newData) {
+              // map the range of the input to the window height:
+              var yPos = map(newData, 0, 255, 0, height);
+              // draw the line in a pretty color:
+              stroke(255, 0, 80);
+              line(xPos, height, xPos, height - yPos);
+              // at the edge of the screen, go back to the beginning:
+              if (xPos >= width) {
+                xPos = 0;
+                // clear the screen by resetting the background:
+                background(0x08, 0x16, 0x40);
+              } else {
+                // increment the horizontal position for the next reading:
+                xPos++;
+              }
+              text(newData, 50, 50);
+            }
 
-//initially setting of the page has black background, then alternating between grey and black.
-function graphData(newData) {
-  background(0);
-  fill(255);
-  text("sensor value: " + newData, 300, 300);
-  if (datain == 0) {
-       text("button pressed: YES", 50,50);
-       background(10);
-   } else {
-       text("button pressed: NO", 50,30);
-       background(50);
-   }
-}
+            function draw() {
+              graphData(datain);
+              text("Joystick xval: " + datain,30,30);
+              text("Joystick yval: " + datain,30,60);
+
+              // background(0);
+              // fill(255);
+
+              // if (datain == 0) {
+              //     text("button pressed: YES", 30,30);
+              // } else {
+              //     text("button pressed: NO", 30,30);
+              // }
+            }
           </pre>
 
           <h3>The Code Arduino</h3>
           <pre>
-            //setting up
+            int joyPin1 = A0;                 // slider variable connecetd to analog pin 0
+            int joyPin2 = A1;                 // slider variable connecetd to analog pin 1
+            int value1 = 0;                  // variable to read the value from the analog pin 0
+            int value2 = 0;                  // variable to read the value from the analog pin 1
+
             void setup() {
-              Serial.begin(9600);
+             Serial.begin(9600);
             }
 
             void loop() {
-              int button = digitalRead(2);              //button is connected to pin 2
-              Serial.println(button);                   //the serial monitor prints out the value of the button
-              delay(250);                               //pause for 250ms when reading
+             // reads the value of the variable resistor
+             value1 = analogRead(joyPin1);
+             // this small pause is needed between reading
+             // analog pins, otherwise we get the same value twice
+             delay(100);
+             // reads the value of the variable resistor
+             value2 = analogRead(joyPin2);
+
+             //prints out the x and y values on serial monitor
+             Serial.print("X: ");
+             Serial.print(value1);
+             Serial.println();
+             Serial.print("Y: ");
+             Serial.println(value2);
             }
 
           </pre>

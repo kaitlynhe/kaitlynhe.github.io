@@ -46,26 +46,40 @@ function portClose() {
 
 function serialEvent() {
   if (serial.available()) {
-  	datain = Number(serial.readLine());
+    datain = Number(serial.readLine());
     console.log(datain);
   } 
 }
 
+function graphData(newData) {
+  // map the range of the input to the window height:
+  var yPos = map(newData, 0, 255, 0, height);
+  // draw the line in a pretty color:
+  stroke(255, 0, 80);
+  line(xPos, height, xPos, height - yPos);
+  // at the edge of the screen, go back to the beginning:
+  if (xPos >= width) {
+    xPos = 0;
+    // clear the screen by resetting the background:
+    background(0x08, 0x16, 0x40);
+  } else {
+    // increment the horizontal position for the next reading:
+    xPos++;
+  }
+  text(newData, 50, 50);
+}
 
 function draw() {
   graphData(datain);
-}
+  text("Joystick xval: " + datain,30,30);
+  text("Joystick yval: " + datain,30,60);
 
-function graphData(newData) {
-  background(0);
-  fill(255);
-  text("sensor value: " + newData, 300, 300);
-  if (datain == 0) {
-       text("button pressed: YES", 50,50);
-       background(10);
-   } else {
-       text("button pressed: NO", 50,30);
-        background(50);
+  // background(0);
+  // fill(255);
 
-   }
+  // if (datain == 0) {
+  //     text("button pressed: YES", 30,30);
+  // } else {
+  //     text("button pressed: NO", 30,30);
+  // }
 }
