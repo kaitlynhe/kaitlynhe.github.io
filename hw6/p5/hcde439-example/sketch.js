@@ -56,7 +56,7 @@ function graphData(newData) {
   var yPos = map(newData, 0, 255, 0, height);
   // draw the line in a pretty color:
   stroke(255, 0, 80);
-  line(xPos, height, xPos, height - yPos);
+  line(xPos, 400, xPos, height - yPos);
   // at the edge of the screen, go back to the beginning:
   if (xPos >= width) {
     xPos = 0;
@@ -71,8 +71,7 @@ function graphData(newData) {
 
 function draw() {
   graphData(datain);
-  text("Joystick xval: " + datain,30,30);
-  text("Joystick yval: " + datain,30,60);
+
 
   // background(0);
   // fill(255);
