@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html> //assignment 5
+<html> //assignment 6
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
@@ -12,60 +12,108 @@
     <body>
 
       <div class="header">
-          <h1>Assignment 5: Servo + Motor</h1>
+          <h1>Assignment 6: Datalogging</h1>
           <p>
-          Here is all the documentation for Assignment 5!
+          Here is all the documentation for Assignment 6!
           <h3>The Schematic</h3>
-          <img src= "ass5-schematic.jpg" alt= "Picture of the schematic I drew" width=400></a>
-          This drawing is the schematic of a servo motor and a joystick.
-          Both of them are connected to GND and 5V.
-          Joystick x is connected to A0 and y is connected to A1. Servo Motor is connected to Pin 5, and joystick is connected to pin 9.
+          <img src= "ass6-schematic.jpg" alt= "Picture of the schematic I drew" width=400></a>
 
           <h3>The Circuit</h3>
-          <img src= "ass5-circuit.JPG" alt= "Picture of the Circuit I created" width=400></a>
-          This is the final set up for the circuit looping from pin9, A0, A1, 5V to GND.
+          <img src= "ass6-circuit.JPG" alt= "Picture of the Circuit I created" width=400></a>
+          This is the final set up for the circuit looping from pin2, 5V to GND.
 
-          <h3>The Code</h3>
+          <h3>The Code Js</h3>
           <pre>
-            //this code helps Servo motor to be controlled by the joystick so that the angles can be switched
-            #include &lt Servo.h &gt //import servo library
+var serial; // variable to hold an instance of the serialport library
+var portName = '/dev/cu.usbmodem14201' //rename to the name of your port
+var datain; //some data coming in over serial!
+var xPos = 0;
 
-            Servo myServo; //define servo motor variable
-            int x = A1;   //assign the joystick x
-            int y = A0;   //assign the joystick y
-            int x_pos = 0; //assign joystick position
-            int y_pos = 0; //assign joystick position
 
-            int initial_position = 120; //assign servo initial position
+function setup() {
+  serial = new p5.SerialPort();       // make a new instance of the serialport library
+  serial.on('list', printList);       // set a callback function for the serialport list event
+  serial.on('connected', serverConnected); // callback for connecting to the server
+  serial.on('open', portOpen);        // callback for the port opening
+  serial.on('data', serialEvent);     // callback for when new data arrives
+  serial.on('error', serialError);    // callback for errors
+  serial.on('close', portClose);      // callback for the port closing
 
-            //set up the initial positions for servo motor and the joystick
+  serial.list();                      // list the serial ports
+  serial.open(portName);              // open a serial port
+  createCanvas(1200, 800);
+  background(0x08, 0x16, 0x40);
+}
+
+// get the list of ports:
+function printList(portList) {
+ // portList is an array of serial port names
+ for (var i = 0; i < portList.length; i++) {
+ // Display the list the console:
+   print(i + " " + portList[i]);
+ }
+}
+
+function serverConnected() {
+  print('connected to server.');
+}
+
+function portOpen() {
+  print('the serial port opened.')
+}
+
+function serialError(err) {
+  print('Something went wrong with the serial port. ' + err);
+}
+
+function portClose() {
+  print('The serial port closed.');
+}
+
+function serialEvent() {
+  if (serial.available()) {
+  	datain = Number(serial.readLine());
+    console.log(datain);
+  }
+}
+
+//interactive function with the button input
+function draw() {
+  graphData(datain);
+}
+
+//initially setting of the page has black background, then alternating between grey and black.
+function graphData(newData) {
+  background(0);
+  fill(255);
+  text("sensor value: " + newData, 300, 300);
+  if (datain == 0) {
+       text("button pressed: YES", 50,50);
+       background(10);
+   } else {
+       text("button pressed: NO", 50,30);
+       background(50);
+   }
+}
+          </pre>
+
+          <h3>The Code Arduino</h3>
+          <pre>
+            //setting up
             void setup() {
-              myServo.attach(9);  //set up servo to pin 9
-              myServo.write(initial_position);  //set up servo initial position to 120 degrees
-              pinMode(x, INPUT) ;    //set A0 as an input
-              pinMode(y, INPUT) ;   //set A1 as an input
+              Serial.begin(9600);
             }
 
             void loop() {
-              x_pos = analogRead(x);  //read in x position on joystick
-              y_pos = analogRead(y);  //read in y position on joystick
-              if (x_pos < 300) {      //if the x position is less than 300
-                if (initial_position > 0) {   //also if the servo motor angle is more than 0 degree
-                  initial_position = initial_position + 20;     //then the servo motor moves 20 degrees more
-                  myServo.write(initial_position);    //servo inputs out the angle
-                  delay(100);                         //pause for 100ms so that the result is obvious
-                } else {                              //similar action as the previous one described
-                  initial_position = initial_position - 20;
-                  myServo.write (initial_position) ;
-                  delay (100) ;
-                }
-              }
+              int button = digitalRead(2);              //button is connected to pin 2
+              Serial.println(button);                   //the serial monitor prints out the value of the button
+              delay(250);                               //pause for 250ms when reading
             }
-          </pre>
 
+          </pre>
           <h3>The Operation of the Circuit</h3>
           Below is a short demo of the circuit in operation.
-          <img src="demo5.gif" alt="Gif. of the working Circuit" width=400 height=auto></a>
+          <img src="demo6.gif" alt="Gif. of the working Circuit" width=400 height=auto></a>
           </p>
 
     </body>
