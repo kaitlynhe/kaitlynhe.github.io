@@ -25,102 +25,107 @@
           <h3>The Code Js</h3>
           <pre>
             var serial; // variable to hold an instance of the serialport library
-var portName = '/dev/cu.usbmodem14201' //rename to the name of your port
-var dataarray = []; //some data coming in over serial!
-var xPos = 0; // keeps track of the position of the graphs
+            var portName = '/dev/cu.usbmodem14201' //rename to the name of your port
+            var dataarray = []; //some data coming in over serial!
+            var xPos = 0; // keeps track of the position of the graphs
 
 
-function setup() {
-  serial = new p5.SerialPort();       // make a new instance of the serialport library
-  serial.on('list', printList);       // set a callback function for the serialport list event
-  serial.on('connected', serverConnected); // callback for connecting to the server
-  serial.on('open', portOpen);        // callback for the port opening
-  serial.on('data', serialEvent);     // callback for when new data arrives
-  serial.on('error', serialError);    // callback for errors
-  serial.on('close', portClose);      // callback for the port closing
+            function setup() {
+              serial = new p5.SerialPort();       // make a new instance of the serialport library
+              serial.on('list', printList);       // set a callback function for the serialport list event
+              serial.on('connected', serverConnected); // callback for connecting to the server
+              serial.on('open', portOpen);        // callback for the port opening
+              serial.on('data', serialEvent);     // callback for when new data arrives
+              serial.on('error', serialError);    // callback for errors
+              serial.on('close', portClose);      // callback for the port closing
 
-  serial.list();                      // list the serial ports
-  serial.open(portName);              // open a serial port
-  createCanvas(1200, 800);
-  background(0x08, 0x16, 0x40);
-}
+              serial.list();                      // list the serial ports
+              serial.open(portName);              // open a serial port
+              createCanvas(1200, 800);
+              background(0x08, 0x16, 0x40);
+            }
 
-// get the list of ports:
-function printList(portList) {
- // portList is an array of serial port names
- for (var i = 0; i < portList.length; i++) {
- // Display the list the console:
-   print(i + " " + portList[i]);
- }
-}
+            // get the list of ports:
+            function printList(portList) {
+             // portList is an array of serial port names
+             for (var i = 0; i < portList.length; i++) {
+             // Display the list the console:
+               print(i + " " + portList[i]);
+             }
+            }
 
-function serverConnected() {
-  print('connected to server.');
-}
+            function serverConnected() {
+              print('connected to server.');
+            }
 
-function portOpen() {
-  print('the serial port opened.')
-}
+            function portOpen() {
+              print('the serial port opened.')
+            }
 
-function serialError(err) {
-  print('Something went wrong with the serial port. ' + err);
-}
+            function serialError(err) {
+              print('Something went wrong with the serial port. ' + err);
+            }
 
-function portClose() {
-  print('The serial port closed.');
-}
+            function portClose() {
+              print('The serial port closed.');
+            }
 
-// prints out the readings
-function serialEvent() {
-  if (serial.available()) {
-    var datastring = serial.readLine(); // readin some serial
-    var newarray;
-    try {
-      newarray = JSON.parse(datastring); // can we parse the serial
-      } catch(err) {
-          console.log(err);
-    }
-    if (typeof(newarray) == 'object') {
-      dataarray = newarray;
-    }
-    console.log("got back " + datastring);
-  }
-}
+            // prints out the readings
+            function serialEvent() {
+              if (serial.available()) {
+                var datastring = serial.readLine(); // readin some serial
+                var newarray;
+                try {
+                  newarray = JSON.parse(datastring); // can we parse the serial
+                  } catch(err) {
+                      console.log(err);
+                }
+                if (typeof(newarray) == 'object') {
+                  dataarray = newarray;
+                }
+                console.log("got back " + datastring);
 
-function keyPressed() {
-  console.log("writing key");
-  serial.write(key);
-}
+              }
+            }
+
+            function keyPressed() {
+              console.log("writing key");
+              serial.write(key);
+            }
 
 
-function draw() {
-  stroke('rgba(0,255,0,0.25)'); // green
-  graphData(dataarray[0]);
+            function draw() {
+              stroke('rgba(0,255,0,0.25)'); // green
+              graphData(dataarray[0]);
+              console.log(dataarray[0]);
 
-  stroke('rgba(0,80,255,0.5)'); // blue
-  graphData(dataarray[1]);
-  xPos++;
-}
+              stroke('rgba(0,80,255,0.5)'); // blue
+              graphData(dataarray[1]);
+              console.log(dataarray[1]);
 
-function graphData(newData) {
-  // map the range of the input to the window height:
-  var yPos = map(newData, 0, 1023, 0, height);
-  // draw the line
-  stroke(255, 0, 80);
-  line(xPos, 400, xPos, height - yPos);
+            }
 
-  var xPos = map(newData, 200, 500, width);
-  stroke(255, 0, 30);
-  line(yPos, 400, yPos, height - xPos);
-  // at the edge of the screen, go back to the beginning:
-  if (xPos >= width) {
-    xPos = 0;
-  // clear the screen by resetting the background:
-    background(gray);
-  }
-  text(dataarray[0] + "\n" + dataarray[1], 50, 50);
+            function graphData(newData) {
+              // map the range of the input to the window height:
+              var yPos = map(newData, 0, 1023, 0, height);
+              // draw the line
+              stroke(255, 0, 80);
+              line(xPos, 400, xPos, height - yPos);
 
-}
+              var xPos = map(newData, 0, 500, 0, width);
+              stroke(255, 0, 30);
+              line(yPos, 400, yPos, height - xPos);
+              // at the edge of the screen, go back to the beginning:
+              if (xPos >= width & yPos >= height) {
+                xPos = 0;
+                yPos = 0;
+              // clear the screen by resetting the background:
+                background(0x08, 0x16, 0x40);
+              } else {
+                xPos++;
+                yPos++;
+              }
+            }
 
 
           </pre>
@@ -159,6 +164,13 @@ function graphData(newData) {
             void loop() {
                if (Serial.available() > 0) {   // if there's serial data
                 int inByte = Serial.read();    // reads serial data
+                //turn on the lED when H key on the keyboard is pressed
+                if(inByte == 'h' || inByte == 'H') {
+                  digitalWrite(13, HIGH);
+                } else {
+                  //LED off when the H key is not pressed
+                  digitalWrite(13, LOW);
+                }
                 Serial.write(inByte);          // send it back out as raw binary data
                 analogWrite(13, inByte);        // use it to set the LED brightness by writing data to pin 5
               }
@@ -169,7 +181,7 @@ function graphData(newData) {
               t = Thermister(temp);   //parse the raw data into Fahrenheit
 
 
-              if (ldr <=300) {    //check if there are light; in this case no light
+              if (ldr <=500) {    //check if there are light; in this case no light
                 digitalWrite(ledPin, HIGH);   //no/dim light so turn on the LED
               } else {
                 digitalWrite(ledPin, LOW);    //bright light so LED off

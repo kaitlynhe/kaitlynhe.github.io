@@ -58,6 +58,7 @@ function serialEvent() {
       dataarray = newarray;
     }
     console.log("got back " + datastring);
+
   } 
 }
 
@@ -70,10 +71,12 @@ function keyPressed() {
 function draw() {
   stroke('rgba(0,255,0,0.25)'); // green
   graphData(dataarray[0]);
+  console.log(dataarray[0]);
 
   stroke('rgba(0,80,255,0.5)'); // blue
   graphData(dataarray[1]);
-  xPos++;
+  console.log(dataarray[1]);
+
 }
 
 function graphData(newData) {
@@ -83,16 +86,19 @@ function graphData(newData) {
   stroke(255, 0, 80);
   line(xPos, 400, xPos, height - yPos);
 
-  var xPos = map(newData, 200, 500, width);
+  var xPos = map(newData, 0, 500, 0, width);
   stroke(255, 0, 30);
   line(yPos, 400, yPos, height - xPos);
   // at the edge of the screen, go back to the beginning:
-  if (xPos >= width) {
+  if (xPos >= width & yPos >= height) {
     xPos = 0;
+    yPos = 0;
   // clear the screen by resetting the background:
-    background(gray);
-  } 
-  text(dataarray[0] + "\n" + dataarray[1], 50, 50);
+    background(0x08, 0x16, 0x40);
+  } else {
+    xPos++;
+    yPos++;
+  }
 
 }
 
