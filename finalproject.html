@@ -14,11 +14,190 @@
         <div class="header">
             <h1>Final Project</h1>
             <p>
-            I am not sure what my project would look like yet..
-            but I would want something that can detect the soil temperture for my succenlents, so that I know when to put them inside or be worried that they might have a chance to get frozen or too hot.
-            </p>
+            For my final project, I built a temperture and humidity detector that gives you feedback if the space you are in is comfortable and healthy for you.
             <h2>Bill of Materials</h2>
-            <p>For this project, the bill of materials including a running PC and the datalogger set.</p>
+            <p> Here is a list of inventory materials I used for my final project.
+            </p>
+            <h3>Input</h3>
+            <ol>
+              <li>PushButton</li>
+              <li>DHT11 Temperature & Humidity Sensor</li>
+            </ol>
+            <h3>Output</h3>
+            <ol>
+              <li>White LED light</li>
+              <li>Yellow LED light</li>
+            </ol>
+            <h3>Ohters</h3>
+            <ol>
+              <li>Wires</li>
+              <li>Three 330 Ohm Resistor</li>
+              <li>Uno R3 Controller Board</li>
+            </ol>
+            <h3>The Schematic</h3>
+            <img src= "fp-schematic.png" alt= "Picture of the schematic" width=400></a>
+
+            <h3>The Circuit</h3>
+            <img src= "fp-circuit.png" alt= "Picture of the Circuit I created" width=400></a>
+            This is the final set up for the circuit looping from pin 2, pin 7, pin 11, pin 1 and 5V to GND.
+
+            <h3>The Code Js</h3>
+            <pre>
+              var serial; // variable to hold an instance of the serialport library
+              var portName = '/dev/cu.usbmodem14201' //rename to the name of your port
+              var dataarray = []; //some data coming in over serial!
+              var xPos = 0; // keeps track of the position of the graphs
+
+
+              function setup() {
+                serial = new p5.SerialPort();       // make a new instance of the serialport library
+                serial.on('list', printList);       // set a callback function for the serialport list event
+                serial.on('connected', serverConnected); // callback for connecting to the server
+                serial.on('open', portOpen);        // callback for the port opening
+                serial.on('data', serialEvent);     // callback for when new data arrives
+                serial.on('error', serialError);    // callback for errors
+                serial.on('close', portClose);      // callback for the port closing
+
+                serial.list();                      // list the serial ports
+                serial.open(portName);              // open a serial port
+                createCanvas(1400, 1400);
+                background(0x100, 0x100, 0x100);
+              }
+
+              // get the list of ports:
+              function printList(portList) {
+                // portList is an array of serial port names
+                for (var i = 0; i < portList.length; i++) {
+                  // Display the list the console:
+                  print(i + " " + portList[i]);
+                }
+              }
+
+              function serverConnected() {
+                print('connected to server.');
+              }
+
+              function portOpen() {
+                print('the serial port opened.')
+              }
+
+              function serialError(err) {
+                print('Something went wrong with the serial port. ' + err);
+              }
+
+              function portClose() {
+                print('The serial port closed.');
+              }
+
+              // prints out the readings
+              function serialEvent() {
+                if (serial.available()) {
+                  var datastring = serial.readLine(); // readin some serial
+                  console.log(datastring);
+                  var newarray;
+                  try {
+                    newarray = JSON.parse(datastring); // can we parse the serial
+                  } catch(err) {
+                    console.log(err);
+                  }
+                  if (typeof(newarray) == 'object') {
+                    dataarray = newarray;
+                  }
+                }
+              }
+
+              //graph the tempertuare and humidity change
+              function draw() {
+                graphData(dataarray[0]);  //tempertuare in C
+                graphData(dataarray[1]);  //humidity in %
+              }
+
+              function graphData(newData) {
+                text("temp", 50, 380);
+                //graphing the tempertuare change in lines
+                var yPos = map(newData, 0, 1023, 50, height);
+                line(xPos, 400, xPos, height - yPos);
+                stroke(255, 0, 30);
+
+                //graphing the humidity change in lines
+                text("humidity", 120, 380);
+                var xPos = map(newData, 0, 500, 250, width);
+                stroke(255, 0, 30);
+                line(yPos, 400, yPos, height - xPos);
+                // at the edge of the screen, go back to the beginning:
+                if (xPos >= width & yPos >= height) {
+                  xPos = 0;
+                  yPos = 0;
+                  // clear the screen by resetting the background:
+                  background(0x100, 0x100, 0x100);
+                } else {
+                  xPos++;
+                  yPos++;
+                }
+              }
+            </pre>
+
+            <h3>The Code Arduino</h3>
+            <pre>
+              #include <dht.h>
+              dht DHT;
+              #define DHT11_PIN 7 //DHT11 is connected to pin 7
+
+              const int buttonPin = 2;  //PushButton is connected to pin 2
+              const int white = 12;     //White LED light is connected to pin 12
+              const int yellow = 11;    //Yellow LED light is connected to pin 11
+
+              int temp = 0;   //variable temp to catch DHT11 tempertuare reading
+              int humidity = 0; //variable humidity to catch DHT11 humidity reading
+
+
+              void setup(){
+                pinMode (buttonPin, INPUT); //set button as an INPUT
+                pinMode(white, OUTPUT);     //set white LED as an OUTPUT
+                pinMode(yellow, OUTPUT);    //set yellow LED as an OUTPUT
+                Serial.begin(9600);         //initialize serial communication
+              }
+
+
+              void loop(){
+                if(digitalRead(buttonPin) == HIGH) {
+                  int chk = DHT.read11(DHT11_PIN);
+                  temp = DHT.temperature;
+                  humidity = DHT.humidity;
+                  if(temp != -999 || humidity != -999) {  //rule out the bad data
+
+                  //print in forms of an array for .JS data parse
+                  Serial.print("[");
+                  Serial.print(temp);
+                  Serial.print(",");
+                  Serial.print(humidity);
+                  Serial.println("]");
+                  //Serial.print("Temperature = ");
+                  //Serial.println(temp);
+                  //Serial.print("Humidity = ");
+                  //Serial.println(humidity);
+                  delay(1000);  //pause 1000MS for easier read
+                  }
+
+                  //if the temperture is less than 18C or more than 22C, the white led light goes off
+                  if(temp > 22 || temp < 18) {
+                    digitalWrite(white, LOW);
+                  }
+                  //if the humidity is less than 40% or more than 50%, the yellow light goes off
+                  if(humidity > 50 || humidity < 40) {
+                    digitalWrite(yellow, LOW);
+                  }
+                } else if (digitalRead(buttonPin) == LOW) {    //when the button is not pressed
+                  //both the led lights are on
+                    digitalWrite(white, HIGH);
+                    digitalWrite(yellow, HIGH);
+                  }
+              }
+            </pre>
+            <h3>The Operation of the Circuit</h3>
+            Below is a short demo of the circuit in operation.
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/nUMIDBeXQiw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </p>
 
 
     </body>
