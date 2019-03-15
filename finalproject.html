@@ -42,6 +42,14 @@
             <img src= "fp-circuit.png" alt= "Picture of the Circuit I created" width=400></a>
             This is the final set up for the circuit looping from pin 2, pin 7, pin 11, pin 1 and 5V to GND.
 
+            <h3>Technical Writeup</h3>
+            <p>
+              In order to control the DHT11, I installed a DHT library so that it can access tempertures and humidities. I also put the data into an array form so that JSON can parse for displaying in a HTML.
+              I used 330 Ohm Resisters for both of my LED lights according the previous calcuations I did from my assignemtns and connecting them so that each of them is responsible for one of the two data received.
+              A pushbutton allowed me to turn on and off the circuit easily by using (buttonPin == LOW) and (buttonPin == HIGH).
+
+              As for the computer control displaying, I used .js file linking to a HTML and opened P5.serialcontrol so the data can come through. I was not smart enough to learn the Processing with Arduino.. so, I utilized what I have learned and presented a little data visualization to document the status of the room. 
+            </p>
             <h3>The Code Js</h3>
             <pre>
               var serial; // variable to hold an instance of the serialport library
@@ -153,7 +161,7 @@
 
 
               void setup(){
-                pinMode (buttonPin, INPUT); //set button as an INPUT
+                pinMode(buttonPin, INPUT); //set button as an INPUT
                 pinMode(white, OUTPUT);     //set white LED as an OUTPUT
                 pinMode(yellow, OUTPUT);    //set yellow LED as an OUTPUT
                 Serial.begin(9600);         //initialize serial communication
